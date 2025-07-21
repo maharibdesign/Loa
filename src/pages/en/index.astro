@@ -6,7 +6,7 @@ import { useTranslations } from '../../lib/i18n';
 import { createSupabaseAdmin } from '../../lib/supabase';
 import { validateInitData } from '../../lib/utils';
 
-const t = useTranslations('en'); // CHANGE TO 'am' for the amharic version
+const t = useTranslations('en');
 
 let userStatus: string | null = null;
 let error: string | null = null;
@@ -30,7 +30,7 @@ if (initData) {
             .select('status')
             .eq('telegram_id', telegramId)
             .single();
-        userStatus = data?.status ?? 'unregistered';
+        userStatus = data ? data.status : 'unregistered';
     } catch (e) {
         console.error("Index page auth error:", e.message);
         error = t('errors.invalid_telegram_data');
@@ -39,29 +39,31 @@ if (initData) {
     // For local testing outside telegram
     userStatus = 'unregistered';
 }
+
+const buttonClasses = "block w-full text-white font-bold py-3 px-4 rounded-lg text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out";
 ---
 
 <Layout title={t('header.home')}>
     <Header />
     <main class="flex flex-col items-center justify-center text-center space-y-6 pt-16">
-        {error && <p class="text-red-500 bg-red-500/10 p-3 rounded-lg">{error}</p>}
+        {error && <p class="text-modern-accent-danger bg-modern-accent-danger/10 p-3 rounded-lg">{error}</p>}
         
         <h1 class="text-4xl font-extrabold text-tg-text">{t('home.welcome')}</h1>
         <p class="text-lg text-tg-hint max-w-md">{t('home.description')}</p>
 
         <div class="pt-4 space-y-4 w-full max-w-xs">
             {userStatus === 'unregistered' ? (
-                <a href="/en/register" class="block w-full bg-tg-button text-tg-button-text font-bold py-3 px-4 rounded-lg text-lg hover:opacity-90">
+                <a href="/en/register" class:list={[buttonClasses, "bg-gradient-to-r from-modern-primary-start to-modern-primary-end shadow-modern-primary-end/30"]}>
                     {t('home.button_register')}
                 </a>
             ) : (
-                <a href="/en/profile" class="block w-full bg-tg-button text-tg-button-text font-bold py-3 px-4 rounded-lg text-lg hover:opacity-90">
+                <a href="/en/profile" class:list={[buttonClasses, "bg-gradient-to-r from-modern-primary-start to-modern-primary-end shadow-modern-primary-end/30"]}>
                     {t('home.button_profile')}
                 </a>
             )}
 
             {showAdmin && (
-                 <a href="/admin" class="block w-full bg-gray-600 text-white font-bold py-3 px-4 rounded-lg text-lg hover:bg-gray-700">
+                 <a href="/admin" class:list={[buttonClasses, "bg-gray-700 shadow-gray-900/30"]}>
                     {t('header.admin')}
                 </a>
             )}

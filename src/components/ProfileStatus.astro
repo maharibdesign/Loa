@@ -11,10 +11,10 @@ const { userName, status, lang } = Astro.props;
 const t = useTranslations(lang);
 
 const statusClasses = {
-    'Active': 'bg-green-500/20 text-green-400',
-    'Pending Approval': 'bg-yellow-500/20 text-yellow-400',
-    'Paused': 'bg-blue-500/20 text-blue-400',
-    'Rejected': 'bg-red-500/20 text-red-400',
+    'Active': 'bg-accent-success/20 text-accent-success',
+    'Pending Approval': 'bg-accent-warning/20 text-accent-warning',
+    'Paused': 'bg-brand-blue/20 text-brand-blue',
+    'Rejected': 'bg-accent-danger/20 text-accent-danger',
 };
 ---
 
@@ -31,7 +31,7 @@ const statusClasses = {
     {status === 'Active' && (
         <div class="bg-tg-secondary-bg p-4 rounded-lg">
             <h2 class="text-sm font-medium text-tg-hint mb-2">{t('profile.actions')}</h2>
-            <button id="pause-btn" class="w-full bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-700 disabled:opacity-50">
+            <button id="pause-btn" class="w-full bg-accent-warning text-white font-bold py-2 px-4 rounded-lg hover:opacity-80 disabled:opacity-50 transition-opacity">
                 {t('profile.pause')}
             </button>
         </div>
@@ -40,12 +40,12 @@ const statusClasses = {
     {status === 'Paused' && (
         <div class="bg-tg-secondary-bg p-4 rounded-lg">
             <h2 class="text-sm font-medium text-tg-hint mb-2">{t('profile.actions')}</h2>
-            <button id="resume-btn" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 disabled:opacity-50">
+            <button id="resume-btn" class="w-full bg-accent-success text-white font-bold py-2 px-4 rounded-lg hover:opacity-80 disabled:opacity-50 transition-opacity">
                 {t('profile.resume')}
             </button>
         </div>
     )}
-    <p id="status-update-error" class="text-red-500 text-sm text-center"></p>
+    <p id="status-update-error" class="text-accent-danger text-sm text-center"></p>
 </div>
 
 <script define:vars={{ t }}>
@@ -83,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             tg.HapticFeedback.notificationOccurred('success');
-            // Reload the page to show the new status
             window.location.reload();
 
         } catch (error) {

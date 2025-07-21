@@ -1,8 +1,8 @@
 <div id="announcement-form-container" class="bg-tg-secondary-bg p-4 rounded-lg shadow-inner">
     <h2 class="text-xl font-bold mb-4">Send Announcement</h2>
     <form id="announcement-form" class="space-y-3">
-        <textarea id="announcement-content" rows="4" class="w-full bg-tg-bg border border-gray-600 rounded-md p-2 text-tg-text" placeholder="Type your message to all active students..."></textarea>
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg">Send to All Active Users</button>
+        <textarea id="announcement-content" rows="4" class="w-full bg-tg-bg border border-gray-600 rounded-md p-2 text-tg-text focus:ring-brand-blue focus:border-brand-blue" placeholder="Type your message to all active students..."></textarea>
+        <button type="submit" class="w-full bg-brand-blue hover:opacity-80 text-white font-bold py-2 rounded-lg transition-opacity">Send to All Active Users</button>
         <p id="announcement-status" class="text-center text-sm h-4"></p>
     </form>
 </div>
@@ -22,7 +22,7 @@
             const message = (content as HTMLTextAreaElement).value.trim();
             if (message.length < 10) {
                 status.textContent = 'Message is too short.';
-                status.className = 'text-center text-sm h-4 text-red-500';
+                status.className = 'text-center text-sm h-4 text-accent-danger';
                 return;
             }
 
@@ -43,12 +43,12 @@
                 if (!response.ok) throw new Error(result.error);
 
                 status.textContent = 'Announcement Sent!';
-                status.className = 'text-center text-sm h-4 text-green-500';
+                status.className = 'text-center text-sm h-4 text-accent-success';
                 (content as HTMLTextAreaElement).value = '';
                 
             } catch (error) {
                 status.textContent = `Error: ${error.message}`;
-                status.className = 'text-center text-sm h-4 text-red-500';
+                status.className = 'text-center text-sm h-4 text-accent-danger';
             } finally {
                 setTimeout(() => {
                     button.disabled = false;

@@ -3,10 +3,9 @@ import { createSupabaseAdmin } from "../../lib/supabase";
 
 const supabase = createSupabaseAdmin();
 
-// Fetch pending users
 const { data: users, error } = await supabase
     .from('users')
-    .select('id, full_name, age, grade, phone, email, receipt_url, created_at')
+    .select('id, full_name, age, grade, phone, email, receipt_url, created_at, telegram_id')
     .eq('status', 'Pending Approval')
     .order('created_at', { ascending: true });
 
@@ -14,12 +13,11 @@ if (error) {
     console.error("Error fetching pending users:", error);
 }
 
-// Generate signed URLs for receipts
 const usersWithSignedUrls = users ? await Promise.all(
     users.map(async (user) => {
         const { data, error: urlError } = await supabase.storage
             .from('payment_receipts')
-            .createSignedUrl(user.receipt_url, 60 * 10); // 10 minute expiry
+            .createSignedUrl(user.receipt_url, 60 * 10);
         if (urlError) {
             console.error("Error creating signed URL for user", user.id, urlError);
         }
@@ -38,7 +36,7 @@ const usersWithSignedUrls = users ? await Promise.all(
 
     <div class="space-y-4">
         {usersWithSignedUrls.map(user => (
-            <div class="bg-tg-bg p-3 rounded-md border border-gray-700/50" data-user-id={user.telegram_id}>
+            <div class="bg-tg-bg p-3 rounded-md border border-gray-700/50" data-user-container-id={user.id}>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
                     <div><strong>Name:</strong> {user.full_name}</div>
                     <div><strong>Age:</strong> {user.age}</div>
@@ -49,8 +47,8 @@ const usersWithSignedUrls = users ? await Promise.all(
                     <div class="md:col-span-2"><strong>Receipt:</strong> <a href={user.receipt_signed_url} target="_blank" class="text-tg-link underline">View Receipt</a></div>
                 </div>
                 <div class="mt-3 flex gap-2">
-                    <button class="approve-btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm" data-user-id={user.id}>Approve</button>
-                    <button class="reject-btn w-full bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm" data-user-id={user.id}>Reject</button>
+                    <button class="approve-btn w-full bg-accent-success hover:opacity-80 text-white font-bold py-1 px-3 rounded text-sm transition-opacity" data-user-id={user.id}>Approve</button>
+                    <button class="reject-btn w-full bg-accent-danger hover:opacity-80 text-white font-bold py-1 px-3 rounded text-sm transition-opacity" data-user-id={user.id}>Reject</button>
                 </div>
             </div>
         ))}
@@ -68,7 +66,6 @@ const usersWithSignedUrls = users ? await Promise.all(
             button.textContent = '...';
 
             try {
-                // We use a different API endpoint for admin actions
                 const response = await fetch('/api/admin/user-management', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -84,8 +81,7 @@ const usersWithSignedUrls = users ? await Promise.all(
                     throw new Error(result.error || 'Request failed');
                 }
                 
-                // On success, remove the card from the UI
-                button.closest('[data-user-id]').remove();
+                button.closest('[data-user-container-id]').remove();
                 tg.HapticFeedback.notificationOccurred('success');
 
             } catch (error) {

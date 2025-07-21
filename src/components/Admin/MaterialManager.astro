@@ -18,18 +18,18 @@ if (error) console.error("Error fetching materials:", error);
         <h3 class="font-semibold">Upload New Material</h3>
         <div>
             <label for="title" class="text-sm">Title</label>
-            <input type="text" name="title" required class="mt-1 block w-full bg-tg-secondary-bg border border-gray-600 rounded-md p-2 text-tg-text focus:ring-tg-link focus:border-tg-link">
+            <input type="text" name="title" required class="mt-1 block w-full bg-tg-secondary-bg border border-gray-600 rounded-md p-2 text-tg-text focus:ring-brand-blue focus:border-brand-blue">
         </div>
         <div>
             <label for="description" class="text-sm">Description</label>
-            <textarea name="description" rows="2" class="mt-1 block w-full bg-tg-secondary-bg border border-gray-600 rounded-md p-2 text-tg-text focus:ring-tg-link focus:border-tg-link"></textarea>
+            <textarea name="description" rows="2" class="mt-1 block w-full bg-tg-secondary-bg border border-gray-600 rounded-md p-2 text-tg-text focus:ring-brand-blue focus:border-brand-blue"></textarea>
         </div>
         <div>
             <label for="material_file" class="text-sm">File (PDF, MP4, DOC)</label>
-            <input type="file" name="material_file" required accept=".pdf,.mp4,.doc,.docx" class="mt-1 block w-full text-sm text-tg-hint file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-tg-button file:text-tg-button-text hover:file:bg-opacity-80">
+            <input type="file" name="material_file" required accept=".pdf,.mp4,.doc,.docx" class="mt-1 block w-full text-sm text-tg-hint file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-blue file:text-white hover:file:opacity-80">
         </div>
-        <button type="submit" class="w-full bg-tg-button text-tg-button-text font-bold py-2 rounded-lg">Upload</button>
-        <p id="material-form-error" class="text-red-500 text-xs text-center"></p>
+        <button type="submit" class="w-full bg-brand-blue text-white font-bold py-2 rounded-lg hover:opacity-80 transition-opacity">Upload</button>
+        <p id="material-form-error" class="text-accent-danger text-xs text-center"></p>
     </form>
     
     <!-- List of Existing Materials -->
@@ -41,7 +41,7 @@ if (error) console.error("Error fetching materials:", error);
                     <p class="font-semibold">{material.title}</p>
                     <p class="text-xs text-tg-hint">{material.file_name || material.file_url}</p>
                 </div>
-                <button class="delete-material-btn bg-red-600/80 hover:bg-red-600 text-white font-bold p-2 rounded-full h-8 w-8 flex items-center justify-center" data-id={material.id} data-file-url={material.file_url}>
+                <button class="delete-material-btn bg-accent-danger/80 hover:bg-accent-danger text-white font-bold p-2 rounded-full h-8 w-8 flex items-center justify-center transition-colors" data-id={material.id} data-file-url={material.file_url}>
                     ×
                 </button>
             </div>
@@ -77,7 +77,7 @@ if (error) console.error("Error fetching materials:", error);
                 if (!response.ok) throw new Error(result.error || 'Upload failed');
                 
                 alert('Upload successful!');
-                window.location.reload(); // Easiest way to refresh the list
+                window.location.reload();
 
             } catch (error) {
                 if (errorP) errorP.textContent = error.message;
@@ -103,7 +103,7 @@ if (error) console.error("Error fetching materials:", error);
 
                 try {
                     const response = await fetch('/api/materials', {
-                        method: 'POST', // HTML forms don't support DELETE, so we override with a hidden field
+                        method: 'POST',
                         body: formData,
                     });
                      const result = await response.json();

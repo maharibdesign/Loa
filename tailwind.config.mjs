@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
-  darkMode: 'class', // Essential for Telegram theme integration
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
+        // --- Core Telegram Theme ---
         'tg-bg': 'var(--tg-theme-bg-color)',
         'tg-text': 'var(--tg-theme-text-color)',
         'tg-hint': 'var(--tg-theme-hint-color)',
@@ -12,6 +13,22 @@ export default {
         'tg-button': 'var(--tg-theme-button-color)',
         'tg-button-text': 'var(--tg-theme-button-text-color)',
         'tg-secondary-bg': 'var(--tg-theme-secondary-bg-color)',
+
+        // --- NEW MODERNISTIC PALETTE ---
+        // A vibrant, gradient-ready palette for a premium feel.
+        modern: {
+          primary: {
+            start: '#6366F1', // Indigo 500
+            end: '#A855F7',   // Purple 500
+          },
+          accent: {
+            success: '#22D3EE', // Cyan 400 (A fresh, modern "green")
+            danger: '#F43F5E',   // Rose 500 (A strong, clear "red")
+            warning: '#F59E0B',  // Amber 500
+          },
+          // A neutral color for backgrounds on cards/modules to create depth
+          'plate': 'rgba(255, 255, 255, 0.05)',
+        }
       },
     },
   },

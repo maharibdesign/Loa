@@ -5,13 +5,15 @@ const { currentLocale } = Astro;
 const t = useTranslations(currentLocale as 'en' | 'am');
 
 const otherLocale = currentLocale === 'en' ? 'am' : 'en';
-const otherLocalePath = `/${otherLocale}${Astro.url.pathname.substring(3)}`;
+const pathSegments = Astro.url.pathname.split('/').filter(Boolean);
+pathSegments[0] = otherLocale;
+const otherLocalePath = `/${pathSegments.join('/')}`;
 ---
 
-<header class="bg-tg-secondary-bg p-4 flex justify-between items-center shadow-md sticky top-0 z-50">
-    <a href={`/${currentLocale}`} class="text-lg font-bold text-tg-text">{t('header.title')}</a>
+<header class="bg-gradient-to-r from-modern-primary-start to-modern-primary-end text-white p-4 flex justify-between items-center shadow-lg sticky top-0 z-50">
+    <a href={`/${currentLocale}`} class="text-lg font-bold text-white">{t('header.title')}</a>
     <nav class="flex items-center space-x-4">
-        <a href={otherLocalePath} class="text-sm text-tg-link hover:underline">
+        <a href={otherLocalePath} class="text-sm text-white/80 hover:text-white hover:underline transition-colors">
             {t('lang.switch')}
         </a>
     </nav>
