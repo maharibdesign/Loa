@@ -1,0 +1,121 @@
+---
+import { createSupabaseAdmin } from "../../lib/supabase";
+
+const supabase = createSupabaseAdmin();
+const { data: materials, error } = await supabase
+    .from('materials')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+if (error) console.error("Error fetching materials:", error);
+---
+
+<div id="material-manager" class="bg-tg-secondary-bg p-4 rounded-lg shadow-inner">
+    <h2 class="text-xl font-bold mb-4">Material Manager</h2>
+
+    <!-- Create/Upload Form -->
+    <form id="material-form" class="bg-tg-bg p-3 rounded-md border border-gray-700/50 space-y-3 mb-6">
+        <h3 class="font-semibold">Upload New Material</h3>
+        <div>
+            <label for="title" class="text-sm">Title</label>
+            <input type="text" name="title" required class="mt-1 block w-full bg-tg-secondary-bg border border-gray-600 rounded-md p-2 text-tg-text focus:ring-tg-link focus:border-tg-link">
+        </div>
+        <div>
+            <label for="description" class="text-sm">Description</label>
+            <textarea name="description" rows="2" class="mt-1 block w-full bg-tg-secondary-bg border border-gray-600 rounded-md p-2 text-tg-text focus:ring-tg-link focus:border-tg-link"></textarea>
+        </div>
+        <div>
+            <label for="material_file" class="text-sm">File (PDF, MP4, DOC)</label>
+            <input type="file" name="material_file" required accept=".pdf,.mp4,.doc,.docx" class="mt-1 block w-full text-sm text-tg-hint file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-tg-button file:text-tg-button-text hover:file:bg-opacity-80">
+        </div>
+        <button type="submit" class="w-full bg-tg-button text-tg-button-text font-bold py-2 rounded-lg">Upload</button>
+        <p id="material-form-error" class="text-red-500 text-xs text-center"></p>
+    </form>
+    
+    <!-- List of Existing Materials -->
+    <h3 class="font-semibold mb-2">Existing Materials ({materials?.length || 0})</h3>
+    <div id="material-list" class="space-y-2">
+        {materials?.map(material => (
+            <div class="bg-tg-bg p-2 rounded-md flex justify-between items-center" data-material-id={material.id}>
+                <div>
+                    <p class="font-semibold">{material.title}</p>
+                    <p class="text-xs text-tg-hint">{material.file_name || material.file_url}</p>
+                </div>
+                <button class="delete-material-btn bg-red-600/80 hover:bg-red-600 text-white font-bold p-2 rounded-full h-8 w-8 flex items-center justify-center" data-id={material.id} data-file-url={material.file_url}>
+                    ×
+                </button>
+            </div>
+        ))}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tg = window.Telegram?.WebApp;
+        if (!tg || !tg.initData) return;
+
+        const form = document.getElementById('material-form') as HTMLFormElement;
+        const errorP = document.getElementById('material-form-error');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Uploading...';
+            if (errorP) errorP.textContent = '';
+            
+            const formData = new FormData(form);
+            formData.append('initData', tg.initData);
+
+            try {
+                const response = await fetch('/api/materials', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Upload failed');
+                
+                alert('Upload successful!');
+                window.location.reload(); // Easiest way to refresh the list
+
+            } catch (error) {
+                if (errorP) errorP.textContent = error.message;
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+
+        document.querySelectorAll('.delete-material-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                if (!confirm('Are you sure you want to delete this material?')) return;
+                
+                const target = e.currentTarget as HTMLButtonElement;
+                target.disabled = true;
+                target.textContent = '...';
+
+                const { id, fileUrl } = target.dataset;
+                const formData = new FormData();
+                formData.append('initData', tg.initData);
+                formData.append('_method', 'DELETE');
+                formData.append('id', id);
+                formData.append('file_url', fileUrl);
+
+                try {
+                    const response = await fetch('/api/materials', {
+                        method: 'POST', // HTML forms don't support DELETE, so we override with a hidden field
+                        body: formData,
+                    });
+                     const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || 'Delete failed');
+
+                    target.closest('[data-material-id]').remove();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    target.disabled = false;
+                    target.textContent = '×';
+                }
+            });
+        });
+    });
+</script>

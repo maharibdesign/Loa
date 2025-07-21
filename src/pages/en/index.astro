@@ -1,0 +1,71 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { useTranslations } from '../../lib/i18n';
+import { createSupabaseAdmin } from '../../lib/supabase';
+import { validateInitData } from '../../lib/utils';
+
+const t = useTranslations('en'); // CHANGE TO 'am' for the amharic version
+
+let userStatus: string | null = null;
+let error: string | null = null;
+let showAdmin = false;
+
+const initData = Astro.request.headers.get('X-Telegram-Init-Data');
+const adminIds = (import.meta.env.ADMIN_TELEGRAM_IDS || "").split(',');
+
+if (initData) {
+    try {
+        const validatedUser = validateInitData(import.meta.env.TELEGRAM_BOT_TOKEN, initData);
+        const telegramId = validatedUser.user.id.toString();
+
+        if (adminIds.includes(telegramId)) {
+            showAdmin = true;
+        }
+
+        const supabase = createSupabaseAdmin();
+        const { data } = await supabase
+            .from('users')
+            .select('status')
+            .eq('telegram_id', telegramId)
+            .single();
+        userStatus = data?.status ?? 'unregistered';
+    } catch (e) {
+        console.error("Index page auth error:", e.message);
+        error = t('errors.invalid_telegram_data');
+    }
+} else {
+    // For local testing outside telegram
+    userStatus = 'unregistered';
+}
+---
+
+<Layout title={t('header.home')}>
+    <Header />
+    <main class="flex flex-col items-center justify-center text-center space-y-6 pt-16">
+        {error && <p class="text-red-500 bg-red-500/10 p-3 rounded-lg">{error}</p>}
+        
+        <h1 class="text-4xl font-extrabold text-tg-text">{t('home.welcome')}</h1>
+        <p class="text-lg text-tg-hint max-w-md">{t('home.description')}</p>
+
+        <div class="pt-4 space-y-4 w-full max-w-xs">
+            {userStatus === 'unregistered' ? (
+                <a href="/en/register" class="block w-full bg-tg-button text-tg-button-text font-bold py-3 px-4 rounded-lg text-lg hover:opacity-90">
+                    {t('home.button_register')}
+                </a>
+            ) : (
+                <a href="/en/profile" class="block w-full bg-tg-button text-tg-button-text font-bold py-3 px-4 rounded-lg text-lg hover:opacity-90">
+                    {t('home.button_profile')}
+                </a>
+            )}
+
+            {showAdmin && (
+                 <a href="/admin" class="block w-full bg-gray-600 text-white font-bold py-3 px-4 rounded-lg text-lg hover:bg-gray-700">
+                    {t('header.admin')}
+                </a>
+            )}
+        </div>
+    </main>
+    <Footer />
+</Layout>

@@ -1,0 +1,99 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import MaterialCard from '../../components/MaterialCard.astro';
+import { useTranslations } from '../../lib/i18n';
+import { createSupabaseAdmin } from '../../lib/supabase';
+import { validateInitData } from '../../lib/utils';
+
+const lang = 'am'; // CHANGE TO 'am' for the amharic version
+const t = useTranslations(lang);
+
+let materials = [];
+let error = null;
+let userName = '';
+
+const initData = Astro.request.headers.get('X-Telegram-Init-Data');
+
+if (!initData) {
+    error = t('errors.invalid_telegram_data');
+} else {
+    try {
+        const validatedUser = validateInitData(import.meta.env.TELEGRAM_BOT_TOKEN, initData);
+        const supabase = createSupabaseAdmin();
+        
+        // First, check user status
+        const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('status, full_name')
+            .eq('telegram_id', validatedUser.user.id)
+            .single();
+
+        if (userError || !userData) {
+            return Astro.redirect(`/${lang}/register`);
+        }
+
+        userName = userData.full_name;
+
+        if (userData.status !== 'Active') {
+            error = t('materials.no_access_message');
+        } else {
+            // If active, fetch materials
+            const { data: materialData, error: materialError } = await supabase
+                .from('materials')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            if (materialError) throw new Error("Could not fetch materials.");
+
+            // Get signed URLs for each material
+            const signedUrlPromises = materialData.map(async (material) => {
+                const { data, error: urlError } = await supabase.storage
+                    .from('course_materials')
+                    .createSignedUrl(material.file_url, 60 * 5); // URL valid for 5 minutes
+                if (urlError) {
+                    console.error(`Failed to get signed URL for ${material.file_url}`, urlError);
+                    return { ...material, signed_file_url: '#' };
+                }
+                return { ...material, signed_file_url: data.signedUrl };
+            });
+            materials = await Promise.all(signedUrlPromises);
+        }
+    } catch (e) {
+        error = e.message;
+    }
+}
+---
+
+<Layout title={t('materials.title')}>
+    <Header />
+    <main class="space-y-6">
+        <h1 class="text-3xl font-bold">{t('materials.title')}</h1>
+        
+        {error && (
+            <div class="bg-red-500/10 text-red-400 p-4 rounded-lg text-center">
+                <h2 class="font-bold text-lg">{t('materials.no_access')}</h2>
+                <p>{error}</p>
+            </div>
+        )}
+
+        {!error && materials.length === 0 && (
+            <p class="text-tg-hint text-center">{t('materials.no_materials')}</p>
+        )}
+
+        {!error && materials.length > 0 && (
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {materials.map(material => (
+                    <MaterialCard 
+                        title={material.title}
+                        description={material.description}
+                        fileUrl={material.signed_file_url}
+                        lang={lang}
+                    />
+                ))}
+            </div>
+        )}
+    </main>
+    <Footer />
+</Layout>

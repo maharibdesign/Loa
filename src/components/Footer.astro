@@ -1,0 +1,11 @@
+---
+import { useTranslations } from '../lib/i18n';
+
+const { currentLocale } = Astro;
+const t = useTranslations(currentLocale as 'en' | 'am');
+const year = new Date().getFullYear();
+---
+
+<footer class="text-center p-4 mt-8 text-sm text-tg-hint">
+    © {year} {t('header.title')}. {t('footer.rights')}
+</footer>

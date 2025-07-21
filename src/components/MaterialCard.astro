@@ -1,0 +1,21 @@
+---
+import { useTranslations } from "../lib/i18n";
+
+export interface Props {
+    title: string;
+    description: string;
+    fileUrl: string;
+    lang: 'en' | 'am';
+}
+const { title, description, fileUrl, lang } = Astro.props;
+const t = useTranslations(lang);
+---
+<div class="bg-tg-secondary-bg rounded-lg shadow p-4 flex flex-col justify-between">
+    <div>
+        <h3 class="font-bold text-lg text-tg-text">{title}</h3>
+        <p class="text-sm text-tg-hint mt-1">{description}</p>
+    </div>
+    <a href={fileUrl} target="_blank" rel="noopener noreferrer" class="mt-4 w-full bg-tg-button text-tg-button-text font-bold py-2 px-4 rounded-lg text-center hover:opacity-90 block">
+        {t('materials.download')}
+    </a>
+</div>

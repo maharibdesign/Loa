@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ProfileStatus from '../../components/ProfileStatus.astro';
+import { useTranslations } from '../../lib/i18n';
+import { createSupabaseAdmin } from '../../lib/supabase';
+import { validateInitData } from '../../lib/utils';
+
+const lang = 'en'; // CHANGE TO 'am' for the amharic version
+const t = useTranslations(lang);
+
+let user = null;
+let error = null;
+
+const initData = Astro.request.headers.get('X-Telegram-Init-Data');
+if (!initData) {
+    error = t('errors.invalid_telegram_data');
+} else {
+    try {
+        const validatedUser = validateInitData(import.meta.env.TELEGRAM_BOT_TOKEN, initData);
+        const supabase = createSupabaseAdmin();
+        const { data, error: dbError } = await supabase
+            .from('users')
+            .select('full_name, status')
+            .eq('telegram_id', validatedUser.user.id)
+            .single();
+
+        if (dbError || !data) {
+            // Redirect to registration if user not found
+            return Astro.redirect(`/${lang}/register`);
+        }
+        user = data;
+    } catch (e) {
+        error = e.message;
+    }
+}
+---
+
+<Layout title={t('header.profile')}>
+    <Header />
+    <main>
+        {error && <p class="text-red-500 text-center">{error}</p>}
+        {user && <ProfileStatus userName={user.full_name} status={user.status} lang={lang} />}
+    </main>
+    <Footer />
+</Layout>

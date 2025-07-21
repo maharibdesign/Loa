@@ -1,0 +1,106 @@
+---
+import { useTranslations } from "../lib/i18n";
+
+export interface Props {
+    userName: string;
+    status: 'Pending Approval' | 'Active' | 'Paused' | 'Rejected';
+    lang: 'en' | 'am';
+}
+
+const { userName, status, lang } = Astro.props;
+const t = useTranslations(lang);
+
+const statusClasses = {
+    'Active': 'bg-green-500/20 text-green-400',
+    'Pending Approval': 'bg-yellow-500/20 text-yellow-400',
+    'Paused': 'bg-blue-500/20 text-blue-400',
+    'Rejected': 'bg-red-500/20 text-red-400',
+};
+---
+
+<div class="space-y-6" id="profile-container">
+    <h1 class="text-3xl font-bold text-tg-text">{t('profile.welcome')} {userName}!</h1>
+    
+    <div class="bg-tg-secondary-bg p-4 rounded-lg">
+        <h2 class="text-sm font-medium text-tg-hint mb-2">{t('profile.status_title')}</h2>
+        <p class={`px-3 py-1 text-lg font-bold rounded-full inline-block ${statusClasses[status]}`}>
+            {t(`profile.status.${status}`)}
+        </p>
+    </div>
+
+    {status === 'Active' && (
+        <div class="bg-tg-secondary-bg p-4 rounded-lg">
+            <h2 class="text-sm font-medium text-tg-hint mb-2">{t('profile.actions')}</h2>
+            <button id="pause-btn" class="w-full bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-700 disabled:opacity-50">
+                {t('profile.pause')}
+            </button>
+        </div>
+    )}
+
+    {status === 'Paused' && (
+        <div class="bg-tg-secondary-bg p-4 rounded-lg">
+            <h2 class="text-sm font-medium text-tg-hint mb-2">{t('profile.actions')}</h2>
+            <button id="resume-btn" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 disabled:opacity-50">
+                {t('profile.resume')}
+            </button>
+        </div>
+    )}
+    <p id="status-update-error" class="text-red-500 text-sm text-center"></p>
+</div>
+
+<script define:vars={{ t }}>
+document.addEventListener('DOMContentLoaded', () => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg || !tg.initData) return;
+
+    const handleError = (message) => {
+        const errorP = document.getElementById('status-update-error');
+        if(errorP) errorP.textContent = message;
+        tg.HapticFeedback.notificationOccurred('error');
+    }
+
+    const handleStatusUpdate = async (newStatus, btn) => {
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = newStatus === 'Paused' ? t('profile.pausing') : t('profile.resuming');
+
+        try {
+            const response = await fetch('/api/user-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    initData: tg.initData,
+                    status: newStatus
+                })
+            });
+            const result = await response.json();
+
+            if (!response.ok) {
+                handleError(result.error || 'An unknown error occurred.');
+                btn.disabled = false;
+                btn.textContent = originalText;
+                return;
+            }
+
+            tg.HapticFeedback.notificationOccurred('success');
+            // Reload the page to show the new status
+            window.location.reload();
+
+        } catch (error) {
+            handleError('Failed to communicate with the server.');
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    };
+    
+    const pauseBtn = document.getElementById('pause-btn');
+    const resumeBtn = document.getElementById('resume-btn');
+
+    if (pauseBtn) {
+        pauseBtn.addEventListener('click', () => handleStatusUpdate('Paused', pauseBtn));
+    }
+    if (resumeBtn) {
+        resumeBtn.addEventListener('click', () => handleStatusUpdate('Active', resumeBtn));
+    }
+});
+</script>

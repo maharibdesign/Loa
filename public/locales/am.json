@@ -1,0 +1,70 @@
+{
+  "header": {
+    "title": "የአቪዬሽን ሕይወት",
+    "home": "ዋና ገጽ",
+    "profile": "ፕሮፋይል",
+    "materials": "የትምህርት ቁሳቁሶች",
+    "admin": "አስተዳዳሪ"
+  },
+  "footer": {
+    "rights": "ሁሉም መብቶች የተጠበቁ ናቸው።"
+  },
+  "lang": {
+    "switch": "ወደ እንግሊዝኛ ቀይር"
+  },
+  "home": {
+    "welcome": "ወደ የተማሪዎች መግቢያ እንኳን በደህና መጡ",
+    "description": "የአቪዬሽን ጉዞዎ እዚህ ይጀምራል። ለመጀመር እባክዎ ይመዝገቡ።",
+    "button_register": "አሁን ይመዝገቡ",
+    "button_profile": "ወደ ፕሮፋይሌ ይሂዱ"
+  },
+  "register": {
+    "title": "የተማሪ ምዝገባ",
+    "subtitle": "ትምህርቱን ለማመልከት ቅጹን ይሙሉ.",
+    "full_name": "ሙሉ ስም",
+    "full_name_placeholder": "ለምሳሌ አበበ ቢቂላ",
+    "age": "ዕድሜ",
+    "grade": "የትምህርት ደረጃ",
+    "grade_placeholder": "ለምሳሌ 12ኛ ክፍል ወይም ዩኒቨርሲቲ",
+    "phone": "ስልክ ቁጥር",
+    "phone_placeholder": "ለምሳሌ 0912345678",
+    "email": "ኢሜይል አድራሻ",
+    "email_placeholder": "ለምሳሌ abebe@example.com",
+    "receipt": "የክፍያ ደረሰኝ",
+    "receipt_help": "የክፍያዎን ቅጽበታዊ ገጽ እይታ ይስቀሉ።",
+    "submit": "ማመልከቻ አስገባ",
+    "submitting": "እያስገባ ነው...",
+    "success_title": "ምዝገባው ገብቷል!",
+    "success_message": "ማመልከቻዎ በግምገማ ላይ ነው። ይሁንታ ሲያገኝ እናሳውቅዎታለን።",
+    "error_title": "በማስገባት ላይ ስህተት ተፈጥሯል",
+    "error_message": "እባክዎ ስህተቶቹን አስተካክለው እንደገና ይሞክሩ።"
+  },
+  "profile": {
+    "welcome": "እንኳን በደህና መመለስዎ,",
+    "status_title": "የምዝገባ ሁኔታ",
+    "status": {
+      "Pending Approval": "ማረጋገጫ በመጠባበቅ ላይ",
+      "Active": "פעיל",
+      "Paused": "ለጊዜው የቆመ",
+      "Rejected": "ተቀባይነት አላገኘም"
+    },
+    "actions": "ድርጊቶች",
+    "pause": "ምዝገባን ለጊዜው አቁም",
+    "resume": "ምዝገባን አስቀጥል",
+    "pausing": "ለጊዜው በማቆም ላይ...",
+    "resuming": "በማስቀጠል ላይ...",
+    "not_registered": "እስካሁን አልተመዘገቡም። ፕሮፋይልዎን ለማግኘት እባክዎ ይመዝገቡ።"
+  },
+  "materials": {
+    "title": "የትምህርት ቁሳቁሶች",
+    "no_access": "መዳረሻ ተከልክሏል",
+    "no_access_message": "የትምህርት ቁሳቁሶችን ለማየት ምዝገባዎ 'Active' መሆን አለበት። እባክዎ ሁኔታዎን ለማየት ፕሮፋይልዎን ያረጋግጡ።",
+    "no_materials": "እስካሁን ምንም ቁሳቁሶች አልተሰቀሉም። እባክዎ ቆይተው እንደገና ይመልከቱ።",
+    "download": "አውርድ"
+  },
+  "errors": {
+    "invalid_telegram_data": "ልክ ያልሆነ ወይም የጎደለ የቴሌግራም መረጃ። እባክዎ ይህንን መተግበሪያ በቴሌግራም ቦትዎ በኩል ይክፈቱ።",
+    "user_not_found": "የተጠቃሚ ፕሮፋይል አልተገኘም። እባክዎ መጀመሪያ ይመዝገቡ።",
+    "unauthorized": "ያልተፈቀደ መዳረሻ።"
+  }
+}

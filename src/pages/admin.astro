@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import RegistrationQueue from '../components/Admin/RegistrationQueue.astro';
+import MaterialManager from '../components/Admin/MaterialManager.astro';
+import AnnouncementForm from '../components/Admin/AnnouncementForm.astro';
+import { useTranslations } from '../lib/i18n';
+import { validateInitData } from '../lib/utils';
+
+const t = useTranslations(Astro.currentLocale as 'en' | 'am');
+
+let isAuthorized = false;
+let error = null;
+
+const initData = Astro.request.headers.get('X-Telegram-Init-Data');
+const adminIds = (import.meta.env.ADMIN_TELEGRAM_IDS || "").split(',');
+
+if (!initData) {
+    error = t('errors.invalid_telegram_data');
+} else if (adminIds.length === 1 && adminIds[0] === '') {
+    error = "ADMIN_TELEGRAM_IDS environment variable is not set.";
+} else {
+    try {
+        const validatedUser = validateInitData(import.meta.env.TELEGRAM_BOT_TOKEN, initData);
+        if (adminIds.includes(validatedUser.user.id.toString())) {
+            isAuthorized = true;
+        } else {
+            error = t('errors.unauthorized');
+        }
+    } catch (e) {
+        error = e.message;
+    }
+}
+---
+
+<Layout title="Admin Panel">
+    <Header />
+    <main class="space-y-8">
+        {isAuthorized ? (
+            <>
+                <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+                <RegistrationQueue />
+                <MaterialManager />
+                <AnnouncementForm />
+            </>
+        ) : (
+            <div class="text-center p-8 bg-red-900/50 rounded-lg">
+                <h1 class="text-2xl font-bold text-red-300">Access Denied</h1>
+                <p class="text-red-400 mt-2">{error || t('errors.unauthorized')}</p>
+            </div>
+        )}
+    </main>
+    <Footer />
+</Layout>

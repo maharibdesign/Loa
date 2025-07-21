@@ -1,0 +1,18 @@
+---
+import { useTranslations } from '../lib/i18n';
+
+const { currentLocale } = Astro;
+const t = useTranslations(currentLocale as 'en' | 'am');
+
+const otherLocale = currentLocale === 'en' ? 'am' : 'en';
+const otherLocalePath = `/${otherLocale}${Astro.url.pathname.substring(3)}`;
+---
+
+<header class="bg-tg-secondary-bg p-4 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <a href={`/${currentLocale}`} class="text-lg font-bold text-tg-text">{t('header.title')}</a>
+    <nav class="flex items-center space-x-4">
+        <a href={otherLocalePath} class="text-sm text-tg-link hover:underline">
+            {t('lang.switch')}
+        </a>
+    </nav>
+</header>

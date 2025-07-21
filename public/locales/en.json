@@ -1,0 +1,70 @@
+{
+  "header": {
+    "title": "Life of Aviation",
+    "home": "Home",
+    "profile": "Profile",
+    "materials": "Materials",
+    "admin": "Admin"
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  },
+  "lang": {
+    "switch": "Switch to Amharic"
+  },
+  "home": {
+    "welcome": "Welcome to the Student Portal",
+    "description": "Your journey into aviation starts here. Please register to get started.",
+    "button_register": "Register Now",
+    "button_profile": "Go to My Profile"
+  },
+  "register": {
+    "title": "Student Registration",
+    "subtitle": "Fill out the form to apply for the course.",
+    "full_name": "Full Name",
+    "full_name_placeholder": "e.g. Abebe Bikila",
+    "age": "Age",
+    "grade": "Grade",
+    "grade_placeholder": "e.g. 12th Grade or University",
+    "phone": "Phone Number",
+    "phone_placeholder": "e.g. 0912345678",
+    "email": "Email Address",
+    "email_placeholder": "e.g. abebe@example.com",
+    "receipt": "Payment Receipt",
+    "receipt_help": "Upload a screenshot of your payment.",
+    "submit": "Submit Application",
+    "submitting": "Submitting...",
+    "success_title": "Registration Submitted!",
+    "success_message": "Your application is under review. We will notify you once it's approved.",
+    "error_title": "Submission Error",
+    "error_message": "Please correct the errors and try again."
+  },
+  "profile": {
+    "welcome": "Welcome back,",
+    "status_title": "Subscription Status",
+    "status": {
+      "Pending Approval": "Pending Approval",
+      "Active": "Active",
+      "Paused": "Paused",
+      "Rejected": "Rejected"
+    },
+    "actions": "Actions",
+    "pause": "Pause Subscription",
+    "resume": "Resume Subscription",
+    "pausing": "Pausing...",
+    "resuming": "Resuming...",
+    "not_registered": "You are not registered yet. Please register to access your profile."
+  },
+  "materials": {
+    "title": "Course Materials",
+    "no_access": "Access Denied",
+    "no_access_message": "Your subscription must be 'Active' to view course materials. Please check your profile for your status.",
+    "no_materials": "No materials have been uploaded yet. Please check back later.",
+    "download": "Download"
+  },
+  "errors": {
+    "invalid_telegram_data": "Invalid or missing Telegram data. Please open this app through your Telegram bot.",
+    "user_not_found": "User profile not found. Please register first.",
+    "unauthorized": "Unauthorized access."
+  }
+}

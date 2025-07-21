@@ -1,0 +1,63 @@
+<div id="announcement-form-container" class="bg-tg-secondary-bg p-4 rounded-lg shadow-inner">
+    <h2 class="text-xl font-bold mb-4">Send Announcement</h2>
+    <form id="announcement-form" class="space-y-3">
+        <textarea id="announcement-content" rows="4" class="w-full bg-tg-bg border border-gray-600 rounded-md p-2 text-tg-text" placeholder="Type your message to all active students..."></textarea>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg">Send to All Active Users</button>
+        <p id="announcement-status" class="text-center text-sm h-4"></p>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tg = window.Telegram?.WebApp;
+        if (!tg || !tg.initData) return;
+
+        const form = document.getElementById('announcement-form');
+        const content = document.getElementById('announcement-content');
+        const status = document.getElementById('announcement-status');
+        const button = form.querySelector('button[type="submit"]');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = (content as HTMLTextAreaElement).value.trim();
+            if (message.length < 10) {
+                status.textContent = 'Message is too short.';
+                status.className = 'text-center text-sm h-4 text-red-500';
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = 'Sending...';
+            status.textContent = '';
+
+            try {
+                const response = await fetch('/api/announcements', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        initData: tg.initData,
+                        content: message
+                    })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error);
+
+                status.textContent = 'Announcement Sent!';
+                status.className = 'text-center text-sm h-4 text-green-500';
+                (content as HTMLTextAreaElement).value = '';
+                
+            } catch (error) {
+                status.textContent = `Error: ${error.message}`;
+                status.className = 'text-center text-sm h-4 text-red-500';
+            } finally {
+                setTimeout(() => {
+                    button.disabled = false;
+                    button.textContent = 'Send to All Active Users';
+                    if (status.textContent === 'Announcement Sent!') {
+                        status.textContent = '';
+                    }
+                }, 3000);
+            }
+        });
+    });
+</script>
