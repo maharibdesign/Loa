@@ -14,19 +14,17 @@ export default {
         'tg-button-text': 'var(--tg-theme-button-text-color)',
         'tg-secondary-bg': 'var(--tg-theme-secondary-bg-color)',
 
-        // --- NEW MODERNISTIC PALETTE ---
-        // A vibrant, gradient-ready palette for a premium feel.
+        // --- MODERNISTIC PALETTE ---
         modern: {
           primary: {
             start: '#6366F1', // Indigo 500
             end: '#A855F7',   // Purple 500
           },
           accent: {
-            success: '#22D3EE', // Cyan 400 (A fresh, modern "green")
-            danger: '#F43F5E',   // Rose 500 (A strong, clear "red")
+            success: '#22D3EE', // Cyan 400
+            danger: '#F43F5E',   // Rose 500
             warning: '#F59E0B',  // Amber 500
           },
-          // A neutral color for backgrounds on cards/modules to create depth
           'plate': 'rgba(255, 255, 255, 0.05)',
         }
       },
