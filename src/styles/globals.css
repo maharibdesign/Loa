@@ -2,29 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Fallback Light Theme Variables */
-  --tg-theme-bg-color: #ffffff;
-  --tg-theme-text-color: #000000;
-  --tg-theme-hint-color: #999999;
-  --tg-theme-link-color: #2481cc;
-  --tg-theme-button-color: #2481cc;
-  --tg-theme-button-text-color: #ffffff;
-  --tg-theme-secondary-bg-color: #f3f2f8;
-}
-
-html.dark {
-  /* Fallback Dark Theme Variables */
-  --tg-theme-bg-color: #1c1c1d;
-  --tg-theme-text-color: #ffffff;
-  --tg-theme-hint-color: #787878;
-  --tg-theme-link-color: #62bcf9;
-  --tg-theme-button-color: #3e97f0;
-  --tg-theme-button-text-color: #ffffff;
-  --tg-theme-secondary-bg-color: #2c2c2e;
-}
-
 body {
+    /* Apply the background color directly from the CSS variable set by our script */
+    background-color: var(--tg-theme-bg-color); 
+    
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI', 'Segoe UI Symbol';
@@ -34,4 +15,10 @@ body {
 
 html {
     height: -webkit-fill-available;
+    /* Add a default transition to make theme changes smoother */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* We no longer need the :root or html.dark blocks here because the JavaScript in Layout.astro
+   now directly injects the style properties from the Telegram theme into the document.
+   This is a more reliable method when using View Transitions. */
